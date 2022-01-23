@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
       
       */
       return Image.asset(
-        "assets/images/tomato.gif",
+        "assets/images/tomatobg.png",
         width: 200,
       );
     }
@@ -196,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
                       return const Image(
-                          image: AssetImage("/assets/tomato.gif"));
+                          image: AssetImage("/assets/tomatobg.png"));
                     case ConnectionState.done:
                       return _handlePreview();
                     default:
@@ -207,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       } else {
                         return const Image(
-                            image: AssetImage("/assets/tomato.gif"));
+                            image: AssetImage("/assets/tomatobg.png"));
                       }
                   }
                 },
