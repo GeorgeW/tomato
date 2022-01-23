@@ -195,8 +195,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-                      return const Image(
-                          image: AssetImage("/assets/tomatobg.png"));
+                      return Image.asset("assets/images/tomatobg.png",
+                          width: 200);
                     case ConnectionState.done:
                       return _handlePreview();
                     default:
@@ -206,8 +206,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           textAlign: TextAlign.center,
                         );
                       } else {
-                        return const Image(
-                            image: AssetImage("/assets/tomatobg.png"));
+                        return Image.asset("assets/images/tomatobg.png",
+                            width: 200);
                       }
                   }
                 },
