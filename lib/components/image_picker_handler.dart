@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
           final pickedFileList = await _picker.pickMultiImage(
             maxWidth: maxWidth,
             maxHeight: maxHeight,
-            imageQuality: quality,
+            imageQuality: 50,
           );
           setState(() {
             _imageFileList = pickedFileList;
@@ -195,8 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-                      return Image.asset("assets/images/tomatobg.png",
-                          width: 200);
+                      return const CircularProgressIndicator();
                     case ConnectionState.done:
                       return _handlePreview();
                     default:
