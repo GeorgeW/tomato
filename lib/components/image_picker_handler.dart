@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, this.title}) : super(key: key);
@@ -26,6 +25,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isVideo = false;
 
   String? _retrieveDataError;
+
+  // String dropdownValue = 'One';
 
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
@@ -118,7 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 leading: CircleAvatar(
                   backgroundImage: checkWeb(kIsWeb),
                 ),
-                trailing: const Icon(Icons.check),
+                trailing: const Icon(
+                  Icons.check,
+                  color: Colors.green,
+                ),
               );
 
               return imageList; // return list tile in list view
@@ -132,9 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
         textAlign: TextAlign.center,
       );
     } else {
-      return const Text(
-        'You have not yet picked an image.',
-        textAlign: TextAlign.center,
+      /*
+      
+      shows image of tomato when waiting for image selection
+      
+      */
+      return Image.asset(
+        "assets/images/tomato.gif",
+        width: 200,
       );
     }
   }
@@ -159,11 +168,24 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  ///
+  ///
+  /// AppBar
+  ///
+  ///
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title!),
+        leading:
+            IconButton(onPressed: showAlert(), icon: const Icon(Icons.menu)),
+        actions: <Widget>[
+          Container(
+            padding: EdgeInsets.all(20),
+            child: const Text("Admin", textAlign: TextAlign.right),
+          ),
+        ],
       ),
       body: Center(
         child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
@@ -173,10 +195,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
-                      return const Text(
-                        'You have not yet picked an image.',
-                        textAlign: TextAlign.center,
-                      );
+                      return const Image(
+                          image: AssetImage("/assets/tomato.gif"));
                     case ConnectionState.done:
                       return _handlePreview();
                     default:
@@ -186,10 +206,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           textAlign: TextAlign.center,
                         );
                       } else {
-                        return const Text(
-                          'You have not yet picked an image.',
-                          textAlign: TextAlign.center,
-                        );
+                        return const Image(
+                            image: AssetImage("/assets/tomato.gif"));
                       }
                   }
                 },
@@ -258,38 +276,75 @@ class _MyHomePageState extends State<MyHomePage> {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text('Select Image'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                  child: const Text('SELECT'),
-                  style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    backgroundColor: Colors.lightGreen,
+          String dropdownValue = 'One';
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Select Customer'),
+              content: Column(
+                children: [
+                  DropdownButton<String>(
+                    value: dropdownValue,
+                    elevation: 16,
+                    isExpanded: true,
+                    underline: Container(
+                      height: 2,
+                      color: Colors.lightGreen,
+                    ),
+                    icon: const Icon(Icons.person_add),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                      });
+                    },
+                    items: <String>['One', 'Two', 'Free', 'Four']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      hintText: 'Enter a load number',
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('CANCEL'),
                   onPressed: () {
-                    double? width = maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                    double? height = maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                    int? quality = qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
-                    onPick(width, height, quality);
                     Navigator.of(context).pop();
-                  }),
-            ],
-          );
+                  },
+                ),
+                TextButton(
+                    child: const Text('SELECT'),
+                    style: TextButton.styleFrom(
+                      primary: Colors.white,
+                      backgroundColor: Colors.lightGreen,
+                    ),
+                    onPressed: () {
+                      double? width = maxWidthController.text.isNotEmpty
+                          ? double.parse(maxWidthController.text)
+                          : null;
+                      double? height = maxHeightController.text.isNotEmpty
+                          ? double.parse(maxHeightController.text)
+                          : null;
+                      int? quality = qualityController.text.isNotEmpty
+                          ? int.parse(qualityController.text)
+                          : null;
+                      onPick(width, height, quality);
+                      Navigator.of(context).pop();
+                    }),
+              ],
+            );
+          });
         });
   }
+
+  showAlert() {}
 }
 
 typedef void OnPickImageCallback(

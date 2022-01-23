@@ -1,5 +1,5 @@
 name: tomato
-description: A new Flutter project.
+description: An app that allows images to be uploaded to customers
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -48,6 +48,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
+  animated_native_splash: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -62,8 +63,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   # assets:
-  #   - images/a_dot_burr.jpeg
+    # - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+   - assets/images/tomato.gif
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -90,3 +94,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+animated_native_splash:
+
+  # This package generates native code to customize Flutter's splash
+
+  # jsonFile is the only required parameter.This the file use to setup the animation object.
+    jsonFile: assets/images/tomatohand.json
