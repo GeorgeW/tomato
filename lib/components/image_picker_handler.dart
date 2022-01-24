@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, this.title}) : super(key: key);
@@ -23,15 +24,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   dynamic _pickImageError;
   bool isVideo = false;
+  bool isLoading = false;
 
   String? _retrieveDataError;
-
-  // String dropdownValue = 'One';
 
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
+
+  // TODO controllers above can be removed ^^^^^^^^^^^^
 
   void _onImageButtonPressed(ImageSource source,
       {BuildContext? context, bool isMultiImage = false}) async {
@@ -39,6 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
       await _displayPickImageDialog(context!,
           (double? maxWidth, double? maxHeight, int? quality) async {
         try {
+          setState(() {
+            // Starts loading the images
+            isLoading = true;
+          });
           final pickedFileList = await _picker.pickMultiImage(
             maxWidth: maxWidth,
             maxHeight: maxHeight,
@@ -46,6 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
           );
           setState(() {
             _imageFileList = pickedFileList;
+            isLoading = false;
+            // Ends loading the images
           });
         } catch (e) {
           setState(() {
@@ -82,6 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    // TODO controllers can be removed
     maxWidthController.dispose();
     maxHeightController.dispose();
     qualityController.dispose();
@@ -98,11 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child: ListView.builder(
             key: UniqueKey(),
             padding: const EdgeInsets.all(8),
+            shrinkWrap: true,
             itemBuilder: (context, index) {
               // Why network for web?
               // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
 
               checkWeb(check) {
+                // Checks if web then selects the correct file class
                 var imageUrl;
                 if (check) {
                   imageUrl = NetworkImage(_imageFileList![index].path);
@@ -116,15 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
               var imageList = ListTile(
                 title: Text(_imageFileList![index].name),
                 subtitle: const Text("Image uploaded!"),
-                leading: CircleAvatar(
-                  backgroundImage: checkWeb(kIsWeb),
-                ),
+                // leading: CircleAvatar(
+                //   backgroundImage: checkWeb(kIsWeb),
+                // ),
                 trailing: const Icon(
                   Icons.check,
                   color: Colors.green,
                 ),
               );
-
               return imageList; // return list tile in list view
             },
             itemCount: _imageFileList!.length,
@@ -136,11 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
         textAlign: TextAlign.center,
       );
     } else {
-      /*
-      
-      shows image of tomato when waiting for image selection
-      
-      */
       return Image.asset(
         "assets/images/tomatobg.png",
         width: 200,
@@ -149,7 +154,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _handlePreview() {
-    return _previewImages();
+    const spinkit = SpinKitThreeBounce(
+      color: Colors.red,
+      size: 50.0,
+    );
+// shows loading icon from spinkit while images are waiting
+    if (isLoading) {
+      return spinkit;
+    } else {
+      return _previewImages();
+    }
   }
 
   Future<void> retrieveLostData() async {
@@ -170,9 +184,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ///
   ///
-  /// AppBar
+  /// AppBar and Floating Buttons vvvvvvvvvvvvv
   ///
   ///
+  /// TODO widget can be extracted into another file
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(onPressed: showAlert(), icon: const Icon(Icons.menu)),
         actions: <Widget>[
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: const Text("Admin", textAlign: TextAlign.right),
           ),
         ],
